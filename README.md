@@ -141,4 +141,300 @@ Graphics preferences are saved locally and automatically restored when the launc
 
 - Windows 10 or Windows 11.
 - A graphics card supporting the OpenGL features required by the engine.
-- The original game data for Screamer and
+- The original game data for Screamer and/or Screamer 2.
+- Windows PowerShell for the graphical launcher.
+- The required SDL2 and runtime libraries.
+
+### Step 1 — Download
+
+Download the latest available archive from the project's GitHub Releases page:
+
+[OpenScreamer GPU Releases](https://github.com/NoiseOvOre/OpenScreamer_GPU/releases)
+
+Extract the archive to a folder of your choice.
+
+### Step 2 — Prepare the Game Data
+
+OpenScreamer GPU does not include the original commercial game files.
+
+You must supply the game data from your own copies of Screamer and Screamer 2.
+
+Place the game data folders next to `openscreamer.exe`.
+
+Example installation structure:
+
+```text
+OpenScreamer_GPU_1.0/
+├── openscreamer.exe
+├── launcher.cmd
+├── Lanceur_OpenScreamer_GPU.ps1
+├── SDL2.dll
+│
+├── screamer/
+│   ├── [original Screamer game data]
+│   └── [original HMP music files]
+│
+├── screamer2/
+│   ├── [original Screamer 2 game data]
+│   └── music/
+│       ├── track_02.ogg
+│       ├── track_03.ogg
+│       ├── track_04.ogg
+│       └── ...
+│
+└── music/                 (optional shared fallback)
+    └── track_02.ogg
+```
+
+The `screamer` and `screamer2` directories contain the original game data. Both are needed if you want both games available from the selection menu.
+
+The `music` directories are intended for extracted original CD audio tracks. The music files are not included in the download.
+
+### Step 3 — Launch the Game
+
+1. Double-click `launcher.cmd`.
+2. Select your preferred language.
+3. Configure the graphics settings.
+4. Click the launch button.
+5. Select Screamer or Screamer 2 from the game's selection menu.
+
+Your graphics settings will be saved for future sessions.
+
+**Note:** If your downloaded package contains source code but no compiled `openscreamer.exe`, you must compile the engine before launching it.
+
+## Music and Audio Support
+
+### Screamer (1995)
+
+The original Screamer uses its own game music files, including HMP music data and instrument banks.
+
+These files are part of the original game data and should remain in their expected locations.
+
+The engine reads the original music resources, including files such as:
+
+- `MUSIC1.HMP`, `MUSIC2.HMP`, etc.
+- `MELODIC.BNK`
+- `DRUM.BNK`
+
+These files are not interchangeable with OGG, MP3, or WAV tracks. Do not rename converted audio files to `.HMP`.
+
+### Screamer 2 (1996) — CD Audio Music
+
+Unlike Screamer 1, Screamer 2 uses audio tracks from the original game CD.
+
+OpenScreamer GPU supports playing these tracks directly from audio files, without requiring the original CD to remain inserted.
+
+**Supported audio formats:**
+
+| Format | Extension | Supported |
+|---|---|---|
+| Ogg Vorbis | `.ogg` | Yes |
+| MP3 | `.mp3` | Yes |
+| WAV | `.wav` | Yes |
+| FLAC | `.flac` | No |
+| AAC / M4A | `.aac` / `.m4a` | No |
+
+OGG Vorbis is a good choice for efficient storage without excessive file sizes. WAV is suitable for lossless copies of the original CD audio.
+
+### Required Music Folder
+
+The recommended location for Screamer 2 music is:
+
+```text
+screamer2/music/
+```
+
+For example:
+
+```text
+screamer2/
+├── [original game files]
+└── music/
+    ├── track_02.ogg
+    ├── track_03.ogg
+    ├── track_04.ogg
+    ├── track_05.ogg
+    └── ...
+```
+
+Music files must use the following naming convention:
+
+```text
+track_NN.extension
+```
+
+Where `NN` is the two-digit CD track number, starting at `02`.
+
+Examples:
+
+```text
+track_02.ogg
+track_03.mp3
+track_04.wav
+```
+
+The track number must match the original CD audio track number. Do not renumber tracks simply to make the sequence start at 01.
+
+### Music Folder Search Order
+
+For the selected game, the engine searches for a requested CD audio track in this order:
+
+1. The selected game's `music/` directory.
+2. The selected game's main data directory.
+3. The shared `music/` directory next to the engine executable.
+
+Within each directory, the format search priority is:
+
+1. `.ogg`
+2. `.mp3`
+3. `.wav`
+
+For example, if both `track_02.ogg` and `track_02.mp3` are present in the same directory, the OGG file will be selected first.
+
+### Extracting the Original CD Music
+
+To enable music playback in Screamer 2:
+
+1. Obtain the original Screamer 2 CD or your own disc image.
+2. Extract the original audio tracks using a CD audio extraction program.
+3. Save or convert the tracks to OGG, MP3, or WAV.
+4. Rename the files using the `track_NN` naming convention, preserving their original CD track numbers.
+5. Copy the files into `screamer2/music/`.
+6. Launch Screamer 2 normally.
+
+The original CD audio tracks are copyrighted game content and are **not distributed with OpenScreamer GPU**.
+
+### Troubleshooting Missing Music
+
+If the game runs but the music is missing:
+
+- Verify that the files are in `screamer2/music/`.
+- Check that the filenames use two-digit track numbers, such as `track_02.ogg`.
+- Make sure the extensions are `.ogg`, `.mp3`, or `.wav`.
+- Verify that the audio files are valid and playable.
+- Check that the original CD track numbers have been preserved.
+- Check the in-game music volume and CD player settings.
+
+FLAC files must be converted to a supported format before use.
+
+## Building from Source
+
+The project includes scripts for building the Windows version of OpenScreamer GPU.
+
+### Windows Build Requirements
+
+The provided build scripts are designed for the MSYS2 UCRT64 environment.
+
+Required tools and libraries include:
+
+- MSYS2 UCRT64.
+- GCC.
+- CMake.
+- Ninja.
+- SDL2 development libraries.
+
+### Compilation
+
+1. Install MSYS2 and the required UCRT64 development packages.
+2. Extract the OpenScreamer GPU source archive.
+3. Open the `01_MOTEUR_GPU` directory.
+4. Run `Compiler_OpenScreamer_Windows.bat`.
+5. Wait for the build to finish.
+
+The script invokes the MSYS2 build environment and compiles the engine.
+
+The resulting executable and required runtime libraries are placed in the generated `OpenScreamer_GPU_1.0` directory.
+
+The compilation script also creates a build log that can be used to investigate compilation errors.
+
+## Configuration Files
+
+The Windows launcher saves user preferences in:
+
+```text
+%LOCALAPPDATA%\OpenScreamerGPU\launcher.json
+```
+
+This file stores the selected language and graphics settings.
+
+Settings are loaded automatically on subsequent launches.
+
+Deleting this configuration file resets the launcher to its default settings.
+
+## Original Game Assets
+
+OpenScreamer GPU is not a standalone commercial game.
+
+It is a source-code project that requires original Screamer game data to run.
+
+No original commercial game assets, copyrighted game music, or complete game distributions are provided as part of this project.
+
+Users are responsible for obtaining the required game data from legitimate copies.
+
+## Project Philosophy
+
+The development of OpenScreamer GPU follows several principles:
+
+**Preserve the original experience.** The original driving physics, gameplay, menus, and visual identity should remain recognizable.
+
+**Modernize the rendering.** Modern GPUs and displays should be able to present the games at higher resolutions and with improved graphical filtering.
+
+**Avoid unnecessary changes.** The goal is not to redesign Screamer or Screamer 2, but to improve their presentation and compatibility.
+
+**Maintain compatibility.** Changes to the rendering engine should avoid introducing regressions into the existing games.
+
+**Respect the original work.** OpenScreamer GPU exists thanks to the reverse-engineering and development efforts behind the original OpenScreamer project.
+
+## Known Limitations
+
+- The project is focused on Windows.
+- Original commercial game data is required.
+- Screamer 2 CD music must be extracted separately.
+- FLAC audio is not currently supported for CD music playback.
+- Some graphical behavior may still differ from the original DOS releases.
+- Rendering compatibility may vary depending on GPU drivers and hardware.
+- Certain graphics options may not affect every scene in the same way.
+- The Windows executable launcher experiment is not part of the stable 1.0 release; the supported launcher is `launcher.cmd`.
+
+## Credits
+
+### Original OpenScreamer Project
+
+**Danik — Original OpenScreamer author and developer.**
+
+OpenScreamer GPU is based on Danik's original OpenScreamer source code and reverse-engineering work.
+
+The original engine implementation provides the foundation on which the GPU rendering enhancements have been developed.
+
+Full credit for the original OpenScreamer project belongs to Danik and its respective contributors.
+
+### OpenScreamer GPU
+
+GPU rendering enhancements, graphical configuration integration, widescreen presentation improvements, and additional development based on the original OpenScreamer engine.
+
+### Original Games
+
+**Screamer (1995)** and **Screamer 2 (1996)** were developed by Milestone.
+
+All original game names, assets, music, and trademarks remain the property of their respective owners.
+
+This is an independent fan development project and is not an official release by the original game developers or publishers.
+
+## License
+
+OpenScreamer GPU is distributed under the **GNU General Public License version 3.0 (GPL-3.0)**, following the license of the original OpenScreamer project.
+
+See the `LICENSE` file for the complete license text.
+
+The GPL-3.0 covers the relevant project source code, not the original games or their commercial data.
+
+Third-party components retain their respective licenses:
+
+- `port/src/nuked/` — LGPL 2.1 or later.
+- `port/src/third_party/` — Public Domain or MIT-0, as specified in their respective source files.
+
+All existing copyright notices and third-party license information must be preserved.
+
+---
+
+**OpenScreamer GPU — Bringing classic arcade racing to modern hardware while preserving the spirit of the originals.**
