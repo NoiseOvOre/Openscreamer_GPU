@@ -48,7 +48,7 @@ The graphical launcher provides several options to customize the experience:
 | Setting | Available Options |
 |---|---|
 | Resolution | Native display resolution and selectable resolutions up to 4K |
-| Display mode | Borderless fullscreen, Windowed, Exclusive fullscreen |
+| Display mode | Borderless fullscreen / Windowed / Exclusive fullscreen |
 | Refresh rate | Selectable display refresh rate |
 | V-Sync | On / Off |
 | MSAA | Off / 2x / 4x / 8x |
@@ -92,6 +92,7 @@ Features include:
 - Widescreen display support.
 - Improved HUD positioning.
 - Modern texture filtering and anti-aliasing options.
+- Playback of original CD audio music from extracted files.
 
 **Important:** For the complete track scenery to appear correctly, set the original game's graphical detail options to their highest values.
 
@@ -107,7 +108,8 @@ Features include:
 - Widescreen race presentation.
 - Improved HUD scaling and positioning.
 - GPU-oriented menu and race transitions.
-- Original in-game options and CD music support.
+- Original in-game options.
+- Playback of original CD audio music from extracted files.
 
 The goal is to preserve the authentic Screamer 2 experience while providing a more suitable visual presentation for modern PCs.
 
@@ -172,23 +174,25 @@ OpenScreamer_GPU_1.0/
 │
 ├── screamer/
 │   ├── [original Screamer game data]
-│   └── [original HMP music files]
+│   └── music/
+│       ├── track_02.ogg
+│       ├── track_03.ogg
+│       └── ...
 │
 ├── screamer2/
 │   ├── [original Screamer 2 game data]
 │   └── music/
 │       ├── track_02.ogg
 │       ├── track_03.ogg
-│       ├── track_04.ogg
 │       └── ...
 │
-└── music/                 (optional shared fallback)
+└── music/                   (optional shared fallback)
     └── track_02.ogg
 ```
 
 The `screamer` and `screamer2` directories contain the original game data. Both are needed if you want both games available from the selection menu.
 
-The `music` directories are intended for extracted original CD audio tracks. The music files are not included in the download.
+The `music` directories contain extracted audio tracks from the original game CDs.
 
 ### Step 3 — Launch the Game
 
@@ -204,27 +208,11 @@ Your graphics settings will be saved for future sessions.
 
 ## Music and Audio Support
 
-### Screamer (1995)
+Both **Screamer (1995)** and **Screamer 2 (1996)** use music from their original game CDs.
 
-The original Screamer uses its own game music files, including HMP music data and instrument banks.
+OpenScreamer GPU supports playing the original CD audio tracks directly from extracted audio files, without requiring the physical CDs during gameplay.
 
-These files are part of the original game data and should remain in their expected locations.
-
-The engine reads the original music resources, including files such as:
-
-- `MUSIC1.HMP`, `MUSIC2.HMP`, etc.
-- `MELODIC.BNK`
-- `DRUM.BNK`
-
-These files are not interchangeable with OGG, MP3, or WAV tracks. Do not rename converted audio files to `.HMP`.
-
-### Screamer 2 (1996) — CD Audio Music
-
-Unlike Screamer 1, Screamer 2 uses audio tracks from the original game CD.
-
-OpenScreamer GPU supports playing these tracks directly from audio files, without requiring the original CD to remain inserted.
-
-**Supported audio formats:**
+### Supported Audio Formats
 
 | Format | Extension | Supported |
 |---|---|---|
@@ -234,73 +222,98 @@ OpenScreamer GPU supports playing these tracks directly from audio files, withou
 | FLAC | `.flac` | No |
 | AAC / M4A | `.aac` / `.m4a` | No |
 
-OGG Vorbis is a good choice for efficient storage without excessive file sizes. WAV is suitable for lossless copies of the original CD audio.
+OGG Vorbis is recommended for its good audio quality and efficient file size.
 
-### Required Music Folder
+WAV can be used when preserving the original CD audio without lossy compression is preferred.
 
-The recommended location for Screamer 2 music is:
+### Music Folder Structure
 
-```text
-screamer2/music/
-```
+Each game has its own dedicated music directory.
 
-For example:
+**Screamer (1995):**
 
 ```text
-screamer2/
-├── [original game files]
+screamer/
+├── [original game data]
 └── music/
     ├── track_02.ogg
     ├── track_03.ogg
     ├── track_04.ogg
-    ├── track_05.ogg
     └── ...
 ```
 
-Music files must use the following naming convention:
+**Screamer 2 (1996):**
 
 ```text
-track_NN.extension
+screamer2/
+├── [original game data]
+└── music/
+    ├── track_02.ogg
+    ├── track_03.ogg
+    ├── track_04.ogg
+    └── ...
 ```
 
-Where `NN` is the two-digit CD track number, starting at `02`.
+### Audio Track Naming
+
+Audio files must follow this naming convention:
+
+`track_NN.extension`
+
+Where `NN` represents the original CD audio track number.
 
 Examples:
 
-```text
-track_02.ogg
-track_03.mp3
-track_04.wav
-```
+- `track_02.ogg`
+- `track_03.mp3`
+- `track_04.wav`
 
-The track number must match the original CD audio track number. Do not renumber tracks simply to make the sequence start at 01.
+Preserve the original CD track numbering. Do not renumber tracks simply to make the sequence start at 01.
 
 ### Music Folder Search Order
 
-For the selected game, the engine searches for a requested CD audio track in this order:
+For the selected game, OpenScreamer GPU searches for music in the following locations:
 
 1. The selected game's `music/` directory.
 2. The selected game's main data directory.
 3. The shared `music/` directory next to the engine executable.
 
-Within each directory, the format search priority is:
+For example:
+
+```text
+screamer/music/track_02.ogg
+screamer/track_02.ogg
+music/track_02.ogg
+```
+
+Or for Screamer 2:
+
+```text
+screamer2/music/track_02.ogg
+screamer2/track_02.ogg
+music/track_02.ogg
+```
+
+The recommended setup is to use separate `music` directories for Screamer and Screamer 2 to avoid mixing their soundtracks.
+
+Within a directory, the supported formats are checked in the following order:
 
 1. `.ogg`
 2. `.mp3`
 3. `.wav`
 
-For example, if both `track_02.ogg` and `track_02.mp3` are present in the same directory, the OGG file will be selected first.
+If multiple versions of the same track exist in the same directory, the first supported format found will be selected.
 
 ### Extracting the Original CD Music
 
-To enable music playback in Screamer 2:
+To enable the original music:
 
-1. Obtain the original Screamer 2 CD or your own disc image.
-2. Extract the original audio tracks using a CD audio extraction program.
+1. Obtain your original Screamer or Screamer 2 CD, or your own disc image.
+2. Extract the CD audio tracks using a suitable CD audio extraction program.
 3. Save or convert the tracks to OGG, MP3, or WAV.
 4. Rename the files using the `track_NN` naming convention, preserving their original CD track numbers.
-5. Copy the files into `screamer2/music/`.
-6. Launch Screamer 2 normally.
+5. Copy the tracks into the corresponding game's `music` directory.
+6. Launch the game normally.
 
 The original CD audio tracks are copyrighted game content and are **not distributed with OpenScreamer GPU**.
 
@@ -308,11 +321,11 @@ The original CD audio tracks are copyrighted game content and are **not distribu
 
 If the game runs but the music is missing:
 
-- Verify that the files are in `screamer2/music/`.
-- Check that the filenames use two-digit track numbers, such as `track_02.ogg`.
+- Verify that the audio files are in the correct game's `music` directory.
+- Check that filenames use two-digit track numbers, such as `track_02.ogg`.
 - Make sure the extensions are `.ogg`, `.mp3`, or `.wav`.
 - Verify that the audio files are valid and playable.
-- Check that the original CD track numbers have been preserved.
+- Preserve the original CD track numbering.
 - Check the in-game music volume and CD player settings.
 
 FLAC files must be converted to a supported format before use.
@@ -389,7 +402,7 @@ The development of OpenScreamer GPU follows several principles:
 
 - The project is focused on Windows.
 - Original commercial game data is required.
-- Screamer 2 CD music must be extracted separately.
+- Original CD music must be extracted separately for both Screamer and Screamer 2.
 - FLAC audio is not currently supported for CD music playback.
 - Some graphical behavior may still differ from the original DOS releases.
 - Rendering compatibility may vary depending on GPU drivers and hardware.
