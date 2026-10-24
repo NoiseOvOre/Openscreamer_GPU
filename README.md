@@ -6,7 +6,8 @@ Based on the original **OpenScreamer** project developed by **Danik**.
 
 ## 🎬 OpenScreamer GPU v1.01 — Gameplay Showcase
 
-[![Watch OpenScreamer GPU v1.01 on YouTube](https://img.youtube.com/vi/VIDEO_ID/hqdefault.jpg)](https://www.youtube.com/watch?v=VIDEO_ID)
+[![Watch OpenScreamer GPU v1.01 on YouTube](https://img.youtube.com/vi/FYoVDGLI0UI/hqdefault.jpg)](https://www.youtube.com/watch?v=FYoVDGLI0UI)
+  
 ---
 
 ## About the Project
